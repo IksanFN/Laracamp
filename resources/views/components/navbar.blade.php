@@ -21,14 +21,35 @@
                     <a class="nav-link" href="#">Business</a>
                 </li>
             </ul>
-            <div class="d-flex">
-                <a href="{{ route('login') }}" class="btn btn-master btn-secondary me-3">
-                    Sign In
-                </a>
-                <a href="{{ route('register') }}" class="btn btn-master btn-primary">
-                    Sign Up
-                </a>
-            </div>
+            @auth
+                <div class="d-flex user-logged nav-item dropdown no-arrow border-0">
+                    <a href="#" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                        Hallo, {{ Auth::user()->name }}
+                        {{-- <img src="/assets/images/user_photo.png" class="user-photo" alt=""> --}}
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="right: 0; left: 0;">
+                            <li>
+                                <a href="" class="dropdown-item">My Dashboard</a>
+                            </li>
+                            <li>
+                                <form action="{{ route('logout') }}" method="post">
+                                    @csrf
+                                    <input type="submit" class="dropdown-item" value="Logout">
+                                </form>
+                            </li>
+                        </ul>
+                    </a>
+                </div>
+             @else
+                <div class="d-flex">
+                    <a href="{{ route('login') }}" class="btn btn-master btn-secondary me-3">
+                        Sign In
+                    </a>
+                    <a href="{{ route('register') }}" class="btn btn-master btn-primary">
+                        Sign Up
+                    </a>
+                </div>  
+            @endauth
+            
         </div>
     </div>
 </nav>
