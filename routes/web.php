@@ -18,6 +18,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('checkout', function() {
+    return view('checkout');
+})->name('checkout');
+
+Route::get('success-checkout', function() {
+    return view('success_checkout');
+})->name('success.checkout');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
