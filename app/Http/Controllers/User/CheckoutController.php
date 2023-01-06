@@ -7,6 +7,8 @@ use App\Models\Camp;
 use App\Models\Checkout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+// use Auth;
 
 class CheckoutController extends Controller
 {
@@ -43,7 +45,23 @@ class CheckoutController extends Controller
         $data['user_id'] = Auth::id();
         $data['camp_id'] = $camp->id;
 
-        return $data;
+        // Update user
+        $user = Auth::user();
+        $user->email = $data['email'];
+        $user->name = $data['name'];
+        $user->occupation = $data['occupation'];
+        $user->save();
+
+        // $user = Auth::user();
+        // $user->update([
+        //     'email' => $data['email'],
+        //     'name' => $data['name'],
+        //     'occupation' => $data['occupation'],
+        // ]);
+
+        $checkout = Checkout::create($data);
+
+        return redirect()->route('checkout.success');
     }
 
     /**
