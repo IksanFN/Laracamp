@@ -28,7 +28,7 @@
                         {{-- <img src="/assets/images/user_photo.png" class="user-photo" alt=""> --}}
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="right: 0; left: 0;">
                             <li>
-                                <a href="" class="dropdown-item">My Dashboard</a>
+                                <a href="{{ route('dashboard') }}" class="dropdown-item">My Dashboard</a>
                             </li>
                             <li>
                                 <form action="{{ route('logout') }}" method="post">
