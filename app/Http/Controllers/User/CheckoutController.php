@@ -29,7 +29,16 @@ class CheckoutController extends Controller
      */
     public function create(Camp $camp)
     {
-        return view('checkout.create', compact('camp'));
+        $authUserId = Auth::id();
+        $userCampId = Checkout::select('camp_id', 'user_id')->get();
+        
+        // If user sudah membeli kelas
+        if ($userCampId[0]->user_id == $authUserId && $userCampId[0]->camp_id == $camp->id) {
+            return redirect()->route('dashboard')->with('error', "You already registered {$camp->title} camp.");
+        } else {
+            return view('checkout.create', compact('camp'));
+        }
+        
     }
 
     /**
