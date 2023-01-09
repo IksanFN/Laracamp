@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Success Checkout'])
 
 @section('content')
 <section class="checkout">

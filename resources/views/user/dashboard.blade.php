@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Dashboard'])
 
 @section('content')
 <section class="dashboard my-5">
@@ -20,7 +20,7 @@
                     @forelse ($checkouts as $checkout)
                     <tr class="align-middle">
                         <td width="18%">
-                            <img src="/assets/images/item_bootcamp.png" height="120" alt="">
+                            <img src="{{ asset('assets/images/item_bootcamp.png') }}" height="120" alt="">
                         </td>
                         <td>
                             <p class="mb-2">

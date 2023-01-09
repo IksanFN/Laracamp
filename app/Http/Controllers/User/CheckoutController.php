@@ -30,10 +30,16 @@ class CheckoutController extends Controller
     public function create(Camp $camp)
     {
         $authUserId = Auth::id();
-        $userCampId = Checkout::select('camp_id', 'user_id')->get();
+        $userCampId = Checkout::where('camp_id', '=', $camp->id)->where('user_id', '=', $authUserId)->get();
+        
+        // Loop data checkout berdasarkan id
+        foreach ($userCampId as $userCampId) {
+            $campId = $userCampId->camp_id;
+            $userId = $userCampId->user_id;
+        };
         
         // If user sudah membeli kelas
-        if ($userCampId[0]->user_id == $authUserId && $userCampId[0]->camp_id == $camp->id) {
+        if ($userId == $authUserId && $campId == $camp->id) {
             return redirect()->route('dashboard')->with('error', "You already registered {$camp->title} camp.");
         } else {
             return view('checkout.create', compact('camp'));
