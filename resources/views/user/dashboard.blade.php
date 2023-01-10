@@ -49,7 +49,7 @@
                     @empty
                         <tr>
                             <td colspan="5">
-                                No Data
+                                Kamu belum mempunyai bootcamp :(
                             </td>
                         </tr>
                     @endforelse

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light">
+<nav class="navbar navbar-expand-lg navbar-light fixed">
     <div class="container">
         <a class="navbar-brand" href="{{ route('home') }}">
             <img src="/assets/images/logo.png" alt="">
@@ -15,7 +15,7 @@
                     <a class="nav-link" href="#">Mentor</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
+                    <a class="nav-link" href="#pricing">Pricing</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Business</a>

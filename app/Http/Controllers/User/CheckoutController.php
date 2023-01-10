@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Checkout\Store;
 use App\Models\Camp;
 use App\Models\Checkout;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class CheckoutController extends Controller
     public function create(Camp $camp)
     {
         $authUserId = Auth::id();
-        $userCampId = Checkout::where('camp_id', '=', $camp->id)->where('user_id', '=', $authUserId)->get();
+        $userCampId = Checkout::where('camp_id', '=', $camp->id)->orWhere('user_id', '=', $authUserId)->get();
         
         // Loop data checkout berdasarkan id
         foreach ($userCampId as $userCampId) {
@@ -53,13 +54,14 @@ class CheckoutController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Camp $camp)
+    public function store(Store $request, Camp $camp)
     {
+        // return $request->all();
         // Mapping request
         $data = $request->all();
         $data['user_id'] = Auth::id();
         $data['camp_id'] = $camp->id;
-
+        
         // Update user
         $user = Auth::user();
         $user->email = $data['email'];
