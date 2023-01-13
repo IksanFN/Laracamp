@@ -63,7 +63,10 @@
                                 <div class="row">
                                     <div class="col-lg-6 col-12">
                                         <label class="form-label">Expired</label>
-                                        <input name="expired" type="month" class="form-control" >
+                                        <input name="expired" type="month" class="form-control {{ $errors->has('expired') ? 'is-invalid' : '' }}" value="{{ old('expired') }}">
+                                        @if ($errors->has('expired'))
+                                            <p class="text-danger">{{ $errors->first('expired') }}</p>
+                                        @endif
                                     </div>
                                     <div class="col-lg-6 col-12">
                                         <label class="form-label">CVC</label>
