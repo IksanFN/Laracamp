@@ -4,11 +4,14 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Checkout\Store;
+use App\Mail\Checkout\AfterCheckout;
 use App\Models\Camp;
 use App\Models\Checkout;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+
 // use Auth;
 
 class CheckoutController extends Controller
@@ -30,22 +33,21 @@ class CheckoutController extends Controller
      */
     public function create(Camp $camp)
     {
+        // Assignment data
         $authUserId = Auth::id();
-        $userCampId = Checkout::where('camp_id', '=', $camp->id)->orWhere('user_id', '=', $authUserId)->get();
+
+        // Query jika sudah ada checkout
+        $checkout = Checkout::where('camp_id', '=', $camp->id)->where('user_id', '=', $authUserId)->first();
         
-        // Loop data checkout berdasarkan id
-        foreach ($userCampId as $userCampId) {
-            $campId = $userCampId->camp_id;
-            $userId = $userCampId->user_id;
-        };
-        
-        // If user sudah membeli kelas
-        if ($userId == $authUserId && $campId == $camp->id) {
-            return redirect()->route('dashboard')->with('error', "You already registered {$camp->title} camp.");
-        } else {
+        // Cek query apakah menghasilkan data atau tidak
+        if (!isset($checkout))
+        {
             return view('checkout.create', compact('camp'));
+        } 
+        else if($checkout->user_id == $authUserId && $checkout->camp_id == $camp->id)
+        {
+            return redirect()->route('dashboard')->with('error', "You already registered {$camp->title} camp.");
         }
-        
     }
 
     /**
@@ -69,14 +71,11 @@ class CheckoutController extends Controller
         $user->occupation = $data['occupation'];
         $user->save();
 
-        // $user = Auth::user();
-        // $user->update([
-        //     'email' => $data['email'],
-        //     'name' => $data['name'],
-        //     'occupation' => $data['occupation'],
-        // ]);
-
+        // Create checkout
         $checkout = Checkout::create($data);
+
+        // Sending email
+        Mail::to(Auth::user()->email)->send(new AfterCheckout($checkout));
 
         return redirect()->route('checkout.success');
     }
@@ -129,5 +128,15 @@ class CheckoutController extends Controller
     public function success()
     {
         return view('checkout.success');
+    }
+
+    public function checkout(Checkout $checkout)
+    {
+        return $checkout;
+    }
+
+    public function invoice(Checkout $checkout)
+    {
+        return $checkout;
     }
 }

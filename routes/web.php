@@ -30,6 +30,7 @@ Route::middleware('auth')->group(function() {
 
     // User Dashboard Checkout
     Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+    Route::get('dashboard/checkout/invoice/{checkout}', [CheckoutController::class, 'invoice'])->name('checkout.invoice');
     
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
