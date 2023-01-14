@@ -46,7 +46,7 @@ class CheckoutController extends Controller
         } 
         else if($checkout->user_id == $authUserId && $checkout->camp_id == $camp->id)
         {
-            return redirect()->route('dashboard')->with('error', "You already registered {$camp->title} camp.");
+            return redirect()->route('user.dashboard')->with('error', "You already registered {$camp->title} camp.");
         }
     }
 
