@@ -134,9 +134,4 @@ class CheckoutController extends Controller
     {
         return $checkout;
     }
-
-    public function invoice(Checkout $checkout)
-    {
-        return $checkout;
-    }
 }

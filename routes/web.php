@@ -4,7 +4,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\CheckoutController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
+use App\Http\Controllers\User\DashboardController as UserDashboard;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -28,10 +29,19 @@ Route::middleware('auth')->group(function() {
     Route::get('checkout/{camp:slug}', [CheckoutController::class, 'create'])->name('checkout.create');
     Route::post('checkout/{camp}', [CheckoutController::class, 'store'])->name('checkout.store');
 
-    // User Dashboard Checkout
+    // Dashboard
     Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-    Route::get('dashboard/checkout/invoice/{checkout}', [CheckoutController::class, 'invoice'])->name('checkout.invoice');
     
+    // User Dashboard
+    Route::prefix('user/dashboard')->namespace('User')->name('user.')->group(function() {
+        Route::get('/', [UserDashboard::class, 'index'])->name('dashboard');
+    });
+    
+    // Admin Dashboard
+    Route::prefix('admin/dashboard')->namespace('Admin')->name('admin.')->group(function() {
+        Route::get('/', [AdminDashboard::class, 'index'])->name('dashboard');
+    });
+
     // Profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
