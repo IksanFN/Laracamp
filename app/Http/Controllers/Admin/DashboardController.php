@@ -12,6 +12,6 @@ class DashboardController extends Controller
     public function index()
     {
         $checkouts = Checkout::with('Camp')->get();
-        return view('user.dashboard', compact('checkouts'));
+        return view('admin.dashboard', compact('checkouts'));
     }
 }
