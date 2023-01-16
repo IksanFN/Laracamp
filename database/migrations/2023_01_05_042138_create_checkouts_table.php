@@ -21,6 +21,9 @@ return new class extends Migration
             $table->date('expired');
             $table->string('cvc', 3);
             $table->boolean('is_paid')->default(false);
+            $table->string('payment_status', 100)->default('Waiting');
+            $table->string('midtrans_url')->nullable();
+            $table->string('midtrans_booking_code')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
