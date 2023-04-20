@@ -4,10 +4,8 @@ namespace App\Http\Controllers\User;
 
 use Midtrans;
 use Exception;
-use Midtrans\Snap;
 use App\Models\Camp;
 use App\Models\User;
-use Midtrans\Config;
 use App\Models\Checkout;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -23,12 +21,11 @@ class CheckoutController extends Controller
 {
     public function __construct()
     {
-        Config::$serverkey = env('MIDTRANS_SERVERKEY');
-        Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
-        Config::$isSanitized = env('MIDTRANS_IS_SANITIZED');
-        Config::$is3ds = env('MIDTRANS_IS_3DS');
-
-
+        
+        Midtrans\Config::$serverKey = env('MIDTRANS_SERVERKEY');
+        Midtrans\Config::$isProduction = env('MIDTRANS_IS_PRODUCTION');
+        MIdtrans\Config::$isSanitized = env('MIDTRANS_IS_SANITIZED');
+        MIdtrans\Config::$is3ds = env('MIDTRANS_IS_3DS');
     }
     /**
      * Display a listing of the resource.
@@ -83,6 +80,8 @@ class CheckoutController extends Controller
         $user->email = $data['email'];
         $user->name = $data['name'];
         $user->occupation = $data['occupation'];
+        $user->phone = $data['phone'];
+        $user->address = $data['address'];
         $user->save();
 
         // Create checkout
@@ -196,13 +195,63 @@ class CheckoutController extends Controller
 
         try {
             // Get Snap Payment Page Url
-            $paymentUrl = Snap::createTransaction($params)->redirect_url;
+            $paymentUrl = \Midtrans\Snap::createTransaction($midtrans_params)->redirect_url;
             $checkout->midtrans_url = $paymentUrl;
             $checkout->save();
-
-            return $paymentUrl;
+            // return $paymentUrl;
         } catch (Exception $e) {
             return false;
         }
+    }
+
+    public function midtransCallback(Request $request)
+    {
+        $notif = $request->method() == 'POST' ? new Midtrans\Notification() : Midtrans\Transaction::status($request->order_id);
+
+        $transaction_status = $notif->transaction_status;
+        $fraud = $notif->fraud_status;
+
+        $checkout_id = explode('-', $notif->order_id)[0];
+        $checkout = Checkout::find($checkout_id);
+
+        if ($transaction_status == 'capture') {
+            if ($fraud == 'challenge') {
+            // TODO Set payment status in merchant's database to 'challenge'
+            $checkout->payment_status = 'Pending';
+            }
+            else if ($fraud == 'accept') {
+            // TODO Set payment status in merchant's database to 'success'
+            $checkout->payment_status = 'Paid';
+            }
+        }
+        else if ($transaction_status == 'cancel') {
+            if ($fraud == 'challenge') {
+            // TODO Set payment status in merchant's database to 'failure'
+            $checkout->payment_status = 'Failed';
+            }
+            else if ($fraud == 'accept') {
+            // TODO Set payment status in merchant's database to 'failure'
+            $checkout->payment_status = 'Failed';
+            }
+        }
+        else if ($transaction_status == 'deny') {
+            // TODO Set payment status in merchant's database to 'failure'
+            $checkout->payment_status = 'Failed';
+        }
+        else if ($transaction_status == 'settlement') {
+            // TODO set payment status in merchant's database to 'Settlement'
+            $checkout->payment_status = 'Paid';
+        }
+        else if ($transaction_status == 'pending') {
+            // TODO set payment status in merchant's database to 'Pending'
+            $checkout->payment_status = 'Pending';
+        }
+        else if ($transaction_status == 'expire') {
+            // TODO set payment status in merchant's database to 'expire'
+            $checkout->payment_status = 'Failed';
+        }
+
+        $checkout->save();
+        return view('checkout/success');
     }
 }

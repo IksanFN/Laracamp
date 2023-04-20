@@ -17,6 +17,8 @@ return new class extends Migration
             $table->dropColumn('card_number');
             $table->dropColumn('expired');
             $table->dropColumn('cvc');
+
+            // Ini di comment karena masih belum terhubung antara Midtrans sama Aplikasi nya jadi di set paid secara manual dulu
             $table->dropColumn('is_paid');
 
         });
