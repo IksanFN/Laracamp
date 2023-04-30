@@ -206,6 +206,7 @@ class CheckoutController extends Controller
 
     public function midtransCallback(Request $request)
     {
+        // Callback Status Midtrans
         $notif = $request->method() == 'POST' ? new Midtrans\Notification() : Midtrans\Transaction::status($request->order_id);
 
         $transaction_status = $notif->transaction_status;
