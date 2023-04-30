@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboard;
 use App\Http\Controllers\Admin\SetPaidController;
 use App\Http\Controllers\User\DashboardController as UserDashboard;
+use App\Models\Checkout;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,7 +24,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-
+Route::get('payment/success', [CheckoutController::class, 'midtransCallback']);
+Route::post('payment/success', [CheckoutController::class, 'midtransCallback']);
 
 Route::middleware('auth')->group(function() {
     // Checkout Routes

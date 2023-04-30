@@ -18,28 +18,31 @@
             <table class="table">
                 <thead>
                     <th>User</th>
-                    <th>Camp</th>
-                    <th>Price</th>
-                    <th>Register Data</th>
-                    <th class="text-center">Paid Status</th>
-                    <th class="text-center">Action</th>
+                    <th class="text-center">Camp</th>
+                    <th class="text-center">Price</th>
+                    <th class="text-center">Register Date</th>
+                    <th class="text-center">Status</th>
+                    @if ($checkouts[0]->payment_status != '')
+                        <th class="text-center">Action</th>
+                    @endif
                 </thead>
                 <tbody>
                     @forelse ($checkouts as $checkout)
                         <tr>
+                            {{-- <td>{{ $pembayaran_bulan_ini }}</td> --}}
                             <td>{{ $checkout->User->name }}</td>
-                            <td>{{ $checkout->Camp->title }}</td>
-                            <td>{{ $checkout->Camp->price }}</td>
-                            <td>{{ $checkout->created_at->format('M-d-Y') }}</td>
+                            <td class="text-center">{{ $checkout->Camp->title }}</td>
+                            <td class="text-center">{{ $checkout->Camp->price }}</td>
+                            <td class="text-center">{{ $checkout->created_at->format('M-d-Y') }}</td>
                             <td class="text-center">
-                                @if ($checkout->is_paid)
+                                @if ($checkout->payment_status == 'Paid')
                                     <span class="badge bg-success">Paid</span>
                                 @else
                                     <span class="badge bg-warning">Waiting</span>
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if (!$checkout->is_paid)
+                                @if ($checkout->payment_status != 'Paid')
                                 <form action="{{ route('admin.update.paid', $checkout->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="btn btn-primary btn-sm">Set to Paid</button>
