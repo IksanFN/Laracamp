@@ -16,7 +16,7 @@ class DashboardController extends Controller
         // $pembayaran_bulan_ini = Checkout::whereYear('created_at', $now->year)
         //                         ->whereMonth('created_at', $now->month)
         //                         ->count('id');
-        $checkouts = Checkout::with('Camp')->get();
+        $checkouts = Checkout::with('Camp')->latest()->paginate(10);
         return view('admin.dashboard', [
             // 'pembayaran_bulan_ini' => $pembayaran_bulan_ini,
             'checkouts' => $checkouts,

@@ -11,7 +11,7 @@ class Checkout extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['user_id', 'camp_id', 'midtrans_status', 'midtrans_url', 'midtrans_booking_code'];
+    protected $fillable = ['user_id', 'camp_id', 'midtrans_status', 'midtrans_url', 'midtrans_booking_code', 'discount_id', 'discount_percentage', 'total'];
 
     public function Camp()
     {

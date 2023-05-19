@@ -22,9 +22,9 @@
                     <th class="text-center">Price</th>
                     <th class="text-center">Register Date</th>
                     <th class="text-center">Status</th>
-                    @if ($checkouts[0]->payment_status != '')
+                    {{-- @if ($checkouts[0]->payment_status != '') --}}
                         <th class="text-center">Action</th>
-                    @endif
+                    {{-- @endif --}}
                 </thead>
                 <tbody>
                     @forelse ($checkouts as $checkout)
