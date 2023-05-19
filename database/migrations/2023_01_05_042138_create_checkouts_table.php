@@ -23,6 +23,8 @@ return new class extends Migration
             $table->boolean('is_paid')->default(false);
             $table->string('payment_status', 100)->default('Waiting');
             $table->string('midtrans_url')->nullable();
+            $table->time('payment_expired')->nullable();
+            $table->string('token')->nullable();
             $table->string('midtrans_booking_code')->nullable();
             $table->timestamps();
             $table->softDeletes();

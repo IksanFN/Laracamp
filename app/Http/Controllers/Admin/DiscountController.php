@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Discount as AdminDiscount;
+use App\Http\Requests\Admin\DiscountUpdate;
 use App\Models\Discount;
 use Illuminate\Http\Request;
+use Alert;
 
 class DiscountController extends Controller
 {
@@ -15,7 +18,8 @@ class DiscountController extends Controller
      */
     public function index()
     {
-        return view('admin.discount');
+        $discounts = Discount::latest()->paginate(10);
+        return view('admin.discount', compact('discounts'));
     }
 
     /**
@@ -34,9 +38,14 @@ class DiscountController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AdminDiscount $request)
     {
-        //
+        // Condition store to database
+        if (Discount::create($request->all())) {
+            return redirect()->route('admin.discount.index')->with('Success', 'Created Successfully');
+        } else {
+            return redirect()->route('admin.discount.index')->with('Error', 'Created Failed');
+        }
     }
 
     /**
@@ -58,7 +67,7 @@ class DiscountController extends Controller
      */
     public function edit(Discount $discount)
     {
-        //
+        return view('admin.edit-discount', ['discount' => $discount]);
     }
 
     /**
@@ -68,9 +77,15 @@ class DiscountController extends Controller
      * @param  \App\Models\Discount  $discount
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Discount $discount)
+    public function update(DiscountUpdate $request, Discount $discount)
     {
-        //
+        if ($discount->update($request->all())) {
+            Alert::success('Success', 'Discount has been updated');
+            return redirect()->route('admin.discount.index');
+        } else {
+            Alert::error('Error', 'Discount updated failed');
+            return redirect()->route('admin.discount.index');
+        }
     }
 
     /**
@@ -79,8 +94,14 @@ class DiscountController extends Controller
      * @param  \App\Models\Discount  $discount
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Discount $discount)
+    public function destroy(Request $request, Discount $discount)
     {
-        //
+        $delete = Discount::findOrFail($discount->id)->first();
+
+        if ($delete->delete()) {
+            return redirect()->route('admin.discount.index')->with(['Success' => "Data Discount berhasil di hapus!"]);
+        } else {
+            return redirect()->route('admin.discount.index')->with(['Success' => "Data Discount berhasil di hapus!"]);
+        }
     }
 }

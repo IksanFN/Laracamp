@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use Midtrans;
 use Exception;
+use Carbon\Carbon;
 use App\Models\Camp;
 use App\Models\User;
 use App\Models\Checkout;
@@ -187,16 +188,28 @@ class CheckoutController extends Controller
             'shipping_address' => $userData,
         ];
 
+        $page_expiry = [
+            'duration' => 5,
+            'unit' => 'minutes',
+        ];
+
+        $currentDateTime = Carbon::now();
+        $teenMinutesLater = $currentDateTime->addMinutes(10);
+
         $midtrans_params = [
             'transaction_details' => $transaction_details,
             'customer_details' => $customer_details,
             'item_details' => $items_details,
+            'page_expiry' => $page_expiry,
         ];
 
         try {
             // Get Snap Payment Page Url
             $paymentUrl = \Midtrans\Snap::createTransaction($midtrans_params)->redirect_url;
+            $snapToken = \Midtrans\Snap::getSnapToken($midtrans_params);
             $checkout->midtrans_url = $paymentUrl;
+            $checkout->token = $snapToken;
+            $checkout->payment_expired = $teenMinutesLater;
             $checkout->save();
             // return $paymentUrl;
         } catch (Exception $e) {

@@ -45,6 +45,8 @@
                                 <a href="" class="btn btn-primary">Detail Transaksi</a>
                             @else
                             <a href="{{ $checkout->midtrans_url }}" target="_blank" class="btn btn-primary">Pay Here</a>
+                            {{-- <input type="hidden" id="snap-token" value="{{ $checkout->token }}" class="btn btn-primary"> --}}
+                            {{-- <input type="submit" id="pay-button" value="Pay Now" class="btn btn-primary"> --}}
                             <a href="https://wa.me/6283822658031?text=Hai, saya ingin bertanya tentang kelas {{ $checkout->Camp->title }}" class="btn btn-primary">
                                 Contact Support
                             </a>
@@ -63,4 +65,19 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('js')
+<script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="SB-Mid-client-61XuGAwQ8Bj8LxSS"></script>
+
+<script type="text/javascript">
+  var payButton = document.getElementById('pay-button');
+
+  /* For example trigger on button clicked, or any time you need */
+  payButton.addEventListener('click', function() {
+    /* in this case, the snap token is retrieved from the Input Field */
+    var snapToken = document.getElementById('snap-token').value;
+    snap.pay(snapToken);
+  });
+</script>
 @endsection
