@@ -25,8 +25,8 @@ class Discount extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'string|required',
-            'code' => 'required|max:5|unique:discounts',
+            'name' => 'required',
+            'code' => 'required|min:3|unique:discounts',
             'description' => 'nullable|string',
             'percentage' => 'numeric|required|min:1|max:100',
         ];

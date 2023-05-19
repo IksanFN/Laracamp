@@ -26,7 +26,7 @@ class DiscountUpdate extends FormRequest
     {
         return [
             'name' => 'string|required',
-            'code' => 'required|max:5|unique:discounts,code,'.$this->id.',id',
+            'code' => 'required|min:3|unique:discounts,code,'.$this->id.',id',
             'description' => 'nullable|string',
             'percentage' => 'numeric|required|min:1|max:100',
         ];
