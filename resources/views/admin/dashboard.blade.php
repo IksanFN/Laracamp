@@ -20,6 +20,7 @@
                     <th>User</th>
                     <th class="text-center">Camp</th>
                     <th class="text-center">Price</th>
+                    <th class="text-center">Discount</th>
                     <th class="text-center">Register Date</th>
                     <th class="text-center">Status</th>
                     {{-- @if ($checkouts[0]->payment_status != '') --}}
@@ -32,7 +33,14 @@
                             {{-- <td>{{ $pembayaran_bulan_ini }}</td> --}}
                             <td>{{ $checkout->User->name }}</td>
                             <td class="text-center">{{ $checkout->Camp->title }}</td>
-                            <td class="text-center">{{ $checkout->Camp->price }}</td>
+                            <td class="text-center">Rp. {{ number_format($checkout->total) }}</td>
+                            <td class="text-center">
+                                @if ($checkout->discount_id)
+                                     <span class="badge bg-success">{{ $checkout->discount_percentage }}%</span>
+                                @else
+                                    Tidak ada
+                                @endif
+                            </td>
                             <td class="text-center">{{ $checkout->created_at->format('M-d-Y') }}</td>
                             <td class="text-center">
                                 @if ($checkout->payment_status == 'Paid')

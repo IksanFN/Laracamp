@@ -31,25 +31,35 @@
                             </p>
                         </td>
                         <td>
-                            <strong>{{ $checkout->Camp->price }}</strong>
+                            <strong>
+                                Rp. {{ number_format($checkout->total) }}
+                                @if ($checkout->discount_id)
+                                    <span class="badge bg-success">Disc {{ $checkout->discount_percentage }}%</span>
+                                @endif
+                            </strong>
                         </td>
                         <td>
                             @if ($checkout->payment_status == 'Paid')
                                 <strong class="text-success">Payment Success</strong>
-                            @else
+                            @elseif ($currentDate > $checkout->payment_expired)
+                                <strong class="text-danger">Expired</strong>
+                            @else 
                                 <strong class="text-warning">Waiting for Payment</strong>
                             @endif
                         </td>
                         <td>
-                            @if ($checkout->payment_status == 'Paid')
+                            
+                            @if ($currentDate > $checkout->payment_expired && $checkout->payment_status == 'Waiting')
+                                <a href="" class="btn btn-primary">Resfresh Transaction</a>
+                            @elseif ($checkout->payment_status == 'Paid')
                                 <a href="" class="btn btn-primary">Detail Transaksi</a>
                             @else
-                            <a href="{{ $checkout->midtrans_url }}" target="_blank" class="btn btn-primary">Pay Here</a>
-                            {{-- <input type="hidden" id="snap-token" value="{{ $checkout->token }}" class="btn btn-primary"> --}}
-                            {{-- <input type="submit" id="pay-button" value="Pay Now" class="btn btn-primary"> --}}
-                            <a href="https://wa.me/6283822658031?text=Hai, saya ingin bertanya tentang kelas {{ $checkout->Camp->title }}" class="btn btn-primary">
-                                Contact Support
-                            </a>
+                                <a href="{{ $checkout->midtrans_url }}" target="_blank" class="btn btn-primary">Pay Here</a>
+                                {{-- <input type="hidden" id="snap-token" value="{{ $checkout->token }}" class="btn btn-primary"> --}}
+                                {{-- <input type="submit" id="pay-button" value="Pay Now" class="btn btn-primary"> --}}
+                                <a href="https://wa.me/6283822658031?text=Hai, saya ingin bertanya tentang kelas {{ $checkout->Camp->title }}" class="btn btn-primary">
+                                    Contact Support
+                                </a>
                             @endif
                         </td>
                     </tr>

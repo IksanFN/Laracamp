@@ -15,6 +15,7 @@ use App\Mail\Checkout\AfterCheckout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\User\Checkout\Store;
+use App\Models\Discount;
 
 // use Auth;
 
@@ -72,7 +73,7 @@ class CheckoutController extends Controller
     {
         // return $request->all();
         // Mapping request
-        $data = $request->all();
+        $data = $request->except('_token');
         $data['user_id'] = Auth::id();
         $data['camp_id'] = $camp->id;
         
@@ -84,6 +85,13 @@ class CheckoutController extends Controller
         $user->phone = $data['phone'];
         $user->address = $data['address'];
         $user->save();
+
+        // Create Discount 
+        if ($request->discount) {
+            $discount = Discount::whereCode($request->discount)->first();
+            $data['discount_id'] = $discount->id;
+            $data['discount_percentage'] = $discount->percentage;
+        }
 
         // Create checkout
         $checkout = Checkout::create($data);
@@ -157,11 +165,7 @@ class CheckoutController extends Controller
         $price = $checkout->Camp->price * 1000;
         $checkout->midtrans_booking_code = $orderId;
 
-        $transaction_details = [
-            'order_id' => $orderId,
-            'gross_amount' => $price,
-        ];
-
+        
         $items_details[] = [
             'id' => $orderId,
             'price' => $price,
@@ -169,6 +173,22 @@ class CheckoutController extends Controller
             'name' => "Payment for {$checkout->Camp->title} Camp",
         ];
 
+        $discountPrice = 0;
+        if ($checkout->Discount) {
+            $discountPrice = $price * $checkout->discount_percentage / 100;
+            $items_details[] = [
+                'id' => $checkout->Discount->code,
+                'price' => -$discountPrice,
+                'quantity' => 1,
+                'name' => "Discount {$checkout->Discount->name} ({$checkout->discount_percentage}%)",
+            ];
+        }
+        $total = $price - $discountPrice;
+        $transaction_details = [
+            'order_id' => $orderId,
+            'gross_amount' => $total,
+        ];
+        
         $userData = [
             'first_name' => $checkout->User->name,
             'last_name' => '',
@@ -208,6 +228,7 @@ class CheckoutController extends Controller
             $paymentUrl = \Midtrans\Snap::createTransaction($midtrans_params)->redirect_url;
             $snapToken = \Midtrans\Snap::getSnapToken($midtrans_params);
             $checkout->midtrans_url = $paymentUrl;
+            $checkout->total = $total;
             $checkout->token = $snapToken;
             $checkout->payment_expired = $teenMinutesLater;
             $checkout->save();
